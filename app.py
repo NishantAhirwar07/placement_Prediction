@@ -33,6 +33,10 @@ try:
         format="%.1f",
     )
 
+    if st.button("Predict Package"):
+        pred = model.predict(np.array([[cgpa]]))[0]
+        st.success(f"Estimated Package: {pred:.2f} LPA")
+
 except Exception as e:
     st.error("Error: Make sure placement.csv exists in the same folder as app.py")
     st.exception(e)
