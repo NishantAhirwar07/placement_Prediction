@@ -24,15 +24,23 @@ try:
     st.subheader("Dataset Preview")
     st.dataframe(df.head())
 
-    cgpa = st.slider("Select CGPA", min_value=0.0, max_value=10.0, value=7.0, step=0.1)
+    cgpa = st.number_input(
+        "Enter CGPA",
+        min_value=0.0,
+        max_value=10.0,
+        value=7.0,
+        step=0.1,
+        format="%.1f",
+    )
 
     if st.button("Predict Package"):
         pred = model.predict(np.array([[cgpa]]))[0]
         st.success(f"Estimated Package: {pred:.2f} LPA")
 
     st.subheader("Model Information")
-    st.write(f"Slope: {model.coef_[0]:.4f}")
-    st.write(f"Intercept: {model.intercept_:.4f}")
+    col1, col2 = st.columns(2)
+    col1.metric("Slope", f"{model.coef_[0]:.4f}")
+    col2.metric("Intercept", f"{model.intercept_:.4f}")
 
 except Exception as e:
     st.error("Error: Make sure placement.csv exists in the same folder as app.py")
