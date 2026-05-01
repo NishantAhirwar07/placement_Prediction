@@ -1,8 +1,0 @@
-```txt id="f4k8de"
-streamlit
-pandas
-numpy
-scikit-learn
-matplotlib
-seaborn
-```
