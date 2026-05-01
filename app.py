@@ -3,45 +3,79 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-st.set_page_config(page_title="Placement Prediction", page_icon="🎓", layout="centered")
+# Page Config
+st.set_page_config(
+    page_title="Placement Prediction App",
+    page_icon="🎓",
+    layout="centered"
+)
 
-st.title("🎓 Placement Prediction App")
-st.write("Predict expected placement package based on CGPA using Linear Regression.")
-
+# Load Dataset
 @st.cache_data
 def load_data():
     return pd.read_csv("placement.csv")
 
-try:
-    df = load_data()
+df = load_data()
 
-    X = df[["cgpa"]]
-    y = df["package"]
+# Train Model
+X = df[["cgpa"]]
+y = df["package"]
 
-    model = LinearRegression()
-    model.fit(X, y)
+model = LinearRegression()
+model.fit(X, y)
 
-    st.subheader("Dataset Preview")
-    st.dataframe(df.head())
+# Custom Styling
+st.markdown("""
+<style>
+.big-title {
+    font-size:40px;
+    font-weight:700;
+    margin-bottom:5px;
+}
+.small-text {
+    color: #cfcfcf;
+    font-size:15px;
+    margin-bottom:25px;
+}
+.stButton>button {
+    width: 180px;
+    border-radius:8px;
+    height:45px;
+    font-size:16px;
+}
+.result-box {
+    background-color:#0d5c2f;
+    padding:18px;
+    border-radius:10px;
+    color:#8dffb1;
+    font-size:18px;
+    font-weight:600;
+}
+</style>
+""", unsafe_allow_html=True)
 
-    cgpa = st.number_input(
-        "Enter CGPA",
-        min_value=0.0,
-        max_value=10.0,
-        value=7.0,
-        step=0.1,
-        format="%.1f",
+# Title
+st.markdown('<div class="big-title">🎓 Placement Prediction App</div>', unsafe_allow_html=True)
+st.markdown('<div class="small-text">Predict expected placement package based on CGPA using Linear Regression.</div>', unsafe_allow_html=True)
+
+# Dataset Preview
+st.subheader("Dataset Preview")
+st.dataframe(df.head())
+
+# Input
+cgpa = st.number_input(
+    "Enter CGPA",
+    min_value=0.0,
+    max_value=10.0,
+    value=7.2,
+    step=0.1
+)
+
+# Prediction
+if st.button("Predict Package"):
+    prediction = model.predict(np.array([[cgpa]]))[0]
+
+    st.markdown(
+        f'<div class="result-box">Estimated Package: {prediction:.2f} LPA</div>',
+        unsafe_allow_html=True
     )
-
-    if st.button("Predict Package"):
-        pred = model.predict(np.array([[cgpa]]))[0]
-        st.success(f"Estimated Package: {pred:.2f} LPA")
-
-    st.subheader("Model Information")
-    col1, col2 = st.columns(2)
-    col1.metric("Slope", f"{model.coef_[0]:.4f}")
-    col2.metric("Intercept", f"{model.intercept_:.4f}")
-
-except Exception as e:
-    st.error("Error: Make sure placement.csv exists in the same folder as app.py")
-    st.exception(e)
