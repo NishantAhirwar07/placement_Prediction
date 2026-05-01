@@ -37,6 +37,11 @@ try:
         pred = model.predict(np.array([[cgpa]]))[0]
         st.success(f"Estimated Package: {pred:.2f} LPA")
 
+    st.subheader("Model Information")
+    col1, col2 = st.columns(2)
+    col1.metric("Slope", f"{model.coef_[0]:.4f}")
+    col2.metric("Intercept", f"{model.intercept_:.4f}")
+
 except Exception as e:
     st.error("Error: Make sure placement.csv exists in the same folder as app.py")
     st.exception(e)
